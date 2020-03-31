@@ -1,9 +1,10 @@
-package com.flangenet.smack
+package com.flangenet.smack.Controller
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.flangenet.smack.R
 
 class LoginActivity : AppCompatActivity() {
 
