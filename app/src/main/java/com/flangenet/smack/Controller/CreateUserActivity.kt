@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager.*
 import com.flangenet.smack.R
 import com.flangenet.smack.Services.AuthService
 import com.flangenet.smack.Services.UserDataService
@@ -75,15 +76,15 @@ class CreateUserActivity : AppCompatActivity() {
                                     enableSpinner(false)
                                     finish()
                                 } else {
-                                    errorToast()
+                                    errorToast("3")
                                 }
                             }
                         } else {
-                            errorToast()
+                            errorToast("2")
                         }
                     }
                 } else {
-                    errorToast()
+                    errorToast("1")
                 }
             }
         } else {
@@ -95,8 +96,8 @@ class CreateUserActivity : AppCompatActivity() {
 
     }
 
-    fun errorToast(){
-        Toast.makeText(this, "Something went wrong, please try again", Toast.LENGTH_LONG).show()
+    fun errorToast( extraMsg :String){
+        Toast.makeText(this, "Something went wrong, please try again $extraMsg", Toast.LENGTH_LONG).show()
         enableSpinner(false)
     }
     fun enableSpinner(enable : Boolean){

@@ -19,7 +19,7 @@ object AuthService {
     var authToken = ""
 
     fun registerUser(
-        conext: Context,
+        context: Context,
         email: String,
         password: String,
         complete: (Boolean) -> Unit
@@ -51,7 +51,7 @@ object AuthService {
 
             }
 
-        Volley.newRequestQueue(conext).add(registerRequest)
+        Volley.newRequestQueue(context).add(registerRequest)
     }
 
     fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
