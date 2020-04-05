@@ -22,9 +22,14 @@ import com.flangenet.smack.R
 import com.flangenet.smack.Services.AuthService
 import com.flangenet.smack.Services.UserDataService
 import com.flangenet.smack.Utilities.BROADCAST_USER_DATA_CHANGE
+import com.flangenet.smack.Utilities.SOCKET_URL
+import io.socket.client.IO
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
+
+
+    val socket = IO.socket(SOCKET_URL)
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -35,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
+
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -49,12 +54,24 @@ class MainActivity : AppCompatActivity() {
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        hideKeyboard()
-
+    }
 
 
+    override fun onResume() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
+        socket.connect()
+        super.onResume()
+    }
 
+
+    override fun onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        socket.disconnect()
+        super.onDestroy()
     }
 
     private val userDataChangeReceiver = object : BroadcastReceiver(){
@@ -120,19 +137,22 @@ class MainActivity : AppCompatActivity() {
                     val channelDesc = descTextField.text.toString()
 
                     // Create channel with name and description
-                    hideKeyboard()
+                    socket.emit("newChannel",channelName,channelDesc)
+
 
                 }
                 .setNegativeButton("Cancel"){dialog: DialogInterface?, which: Int ->
                     // Cancel and close the dialog
-                    hideKeyboard()
+
                 }
                 .show()
         }
 
     }
 
-    fun sendMessageBtnClicked(view: View){}
+    fun sendMessageBtnClicked(view: View){
+        hideKeyboard()
+    }
 
 
     fun hideKeyboard(){
