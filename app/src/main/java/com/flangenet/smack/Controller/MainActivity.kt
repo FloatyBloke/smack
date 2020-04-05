@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         if (AuthService.isLoggedIn) {
             // Log out
             UserDataService.logout()
-            userNameNavHeader.text = "Login"
+            userNameNavHeader.text = ""
             userEmailNavHeader.text= ""
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
             userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
@@ -109,20 +109,8 @@ class MainActivity : AppCompatActivity() {
 
     fun sendMessageBtnClicked(view: View){}
 
-    fun testBtnClicked(view: View){
-        //val t = findViewById()
-        loginBtnNavHeader.text = "Fat Ass"
-
-        testBtn.text = "***"
-        val toasty = Toast.makeText(
-            this,
-            loginBtnNavHeader.text,
-            Toast.LENGTH_LONG
-        ).show()
 
 
-    }
-    fun navHeaderMainClicked(view: View) {
-        val toasty = Toast.makeText(this,userNameNavHeader.text,Toast.LENGTH_LONG).show()
-    }
+
+
 }
