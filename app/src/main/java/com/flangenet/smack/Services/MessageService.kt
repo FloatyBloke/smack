@@ -7,6 +7,7 @@ import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.flangenet.smack.Controller.App
 import com.flangenet.smack.Model.Channel
+import com.flangenet.smack.Model.Message
 import com.flangenet.smack.Utilities.URL_GET_CHANNELS
 import org.json.JSONException
 import java.lang.Error
@@ -14,6 +15,7 @@ import java.lang.Error
 object MessageService {
 
     val channels = ArrayList<Channel>()
+    val messages = ArrayList<Message>()
 
     fun getChannels(context: Context, complete: (Boolean) -> Unit) {
 
