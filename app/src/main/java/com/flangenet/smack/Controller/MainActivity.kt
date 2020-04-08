@@ -20,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.flangenet.smack.Adapters.MessageAdapter
 import com.flangenet.smack.Model.Channel
 import com.flangenet.smack.Model.Message
 import com.flangenet.smack.R
@@ -39,12 +41,17 @@ class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    lateinit var messageAdapter: MessageAdapter
     var selectedChannel : Channel? = null
 
     private fun setupAdapters(){
         channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,MessageService.channels)
         channel_list.adapter = channelAdapter
         //this.channel_list.adapter = channelAdapter
+        messageAdapter = MessageAdapter(this, MessageService.messages)
+        messageListView.adapter = messageAdapter
+        val layoutManager = LinearLayoutManager(this)
+        messageListView.layoutManager = layoutManager
 
 
     }
@@ -147,10 +154,14 @@ class MainActivity : AppCompatActivity() {
         // download message for channel
         if (selectedChannel != null) {
             MessageService.getMessages(selectedChannel!!.id) { complete ->
-                for(message in MessageService.messages){
-                    println(message.message)
-                }
+                    if (complete) {
+                        messageAdapter.notifyDataSetChanged()
+                        if (messageAdapter.itemCount >0) {
+                            messageListView.smoothScrollToPosition(messageAdapter.itemCount -1)
+                        }
+                    }
             }
+
         }
     }
 
@@ -163,6 +174,8 @@ class MainActivity : AppCompatActivity() {
         if (App.prefs.isLoggedIn) {
             // Log out
             UserDataService.logout()
+            channelAdapter.notifyDataSetChanged()
+            messageAdapter.notifyDataSetChanged()
             userNameNavHeader.text = ""
             userEmailNavHeader.text= ""
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
@@ -225,23 +238,33 @@ class MainActivity : AppCompatActivity() {
 
     private val onNewMessage = Emitter.Listener{args ->
         if (App.prefs.isLoggedIn) {
-            runOnUiThread{
+            runOnUiThread {
                 val channelId = args[2] as String
                 if (channelId == selectedChannel?.id) {
                     val msgBody = args[0] as String
 
-                    val userName= args[3] as String
+                    val userName = args[3] as String
                     val userAvatar = args[4] as String
-                    val userAvatarColor= args[5] as String
+                    val userAvatarColor = args[5] as String
                     val id = args[6] as String
                     val timeStamp = args[7] as String
 
-                    val newMessage = Message(msgBody, userName, channelId, userAvatar, userAvatarColor, id, timeStamp)
+                    val newMessage = Message(
+                        msgBody,
+                        userName,
+                        channelId,
+                        userAvatar,
+                        userAvatarColor,
+                        id,
+                        timeStamp
+                    )
 
                     MessageService.messages.add(newMessage)
                     println(newMessage.message)
+                    messageAdapter.notifyDataSetChanged()
+                    messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
-                }
+            }
 
         }
     }
